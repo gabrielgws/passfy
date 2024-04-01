@@ -5,14 +5,21 @@ import Image from "next/image"
 import Link from "next/link"
 
 export default async function Home() {
-  const page = Number(searchParams?.page) || 1;
-  const searchText = (searchParams?.query as string) || '';
-  const category = (searchParams?.category as string) || '';
+  // const page = Number(searchParams?.page) || 1;
+  // const searchText = (searchParams?.query as string) || '';
+  // const category = (searchParams?.category as string) || '';
+
+  // const events = await getAllEvents({
+  //   query: searchText,
+  //   category,
+  //   page,
+  //   limit: 6
+  // })
 
   const events = await getAllEvents({
-    query: searchText,
-    category,
-    page,
+    query: '',
+    category: '',
+    page: 2,
     limit: 6
   })
 
@@ -60,7 +67,8 @@ export default async function Home() {
           emptyStateSubtext="Come back later"
           collectionType="All_Events"
           limit={6}
-          page={page}
+          // page={page}
+          page={2}
           totalPages={events?.totalPages}
         />
       </section>
