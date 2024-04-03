@@ -16,7 +16,8 @@ export default async function Home({ searchParams }: SearchParamProps) {
     query: searchText,
     category,
     page,
-    limit: 6
+    // limit: 6
+    limit: 2
   })
 
   return (
@@ -64,7 +65,6 @@ export default async function Home({ searchParams }: SearchParamProps) {
           collectionType="All_Events"
           limit={6}
           page={page}
-          page={2}
           totalPages={events?.totalPages}
         />
       </section>
