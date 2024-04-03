@@ -32,6 +32,9 @@ export async function POST(request: Request) {
     }
 
     const newOrder = await createOrder(order)
+    if (!newOrder) {
+      return NextResponse.json({ message: 'Failed to create order', error: 'Database error' })
+    }
     return NextResponse.json({ message: 'OK', order: newOrder })
   }
 
