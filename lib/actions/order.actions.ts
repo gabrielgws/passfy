@@ -20,7 +20,7 @@ export const checkoutOrder = async (order: CheckoutOrderParams) => {
       line_items: [
         {
           price_data: {
-            currency: 'usd',
+            currency: 'brl',
             unit_amount: price,
             product_data: {
               name: order.eventTitle
@@ -51,7 +51,7 @@ export const createOrder = async (order: CreateOrderParams) => {
     const newOrder = await Order.create({
       ...order,
       event: order.eventId,
-      buyer: order.buyerId,
+      buyer: order.buyer,
     });
 
     return JSON.parse(JSON.stringify(newOrder));
@@ -144,5 +144,32 @@ export async function getOrdersByUser({ userId, limit = 3, page }: GetOrdersByUs
     return { data: JSON.parse(JSON.stringify(orders)), totalPages: Math.ceil(ordersCount / limit) }
   } catch (error) {
     handleError(error)
+  }
+}
+
+//GET ODER SINGLE
+export async function getOrderById(orderId: string) {
+  try {
+    await connectToDatabase();
+
+    const order = await Order.findById(orderId)
+      .populate({
+        path: 'event',
+        model: Event,
+        populate: {
+          path: 'organizer',
+          model: User,
+          select: '_id firstName lastName',
+        },
+      })
+      .populate('buyer', '_id firstName lastName'); // Assumindo que o comprador está armazenado como uma referência no modelo de pedido
+
+    if (!order) {
+      throw new Error('Order not found');
+    }
+
+    return order;
+  } catch (error) {
+    handleError(error);
   }
 }
