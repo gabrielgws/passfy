@@ -33,14 +33,14 @@ import { IEvent } from "@/lib/database/models/event.model"
 
 type EventFormProps = {
   userId: string;
-  type: "Create" | "Update";
+  type: "Criar" | "Atualizar";
   event?: IEvent;
   eventId?: string;
 }
 
 const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
   const [files, setFiles] = useState<File[]>([]);
-  const initialValues = event && type === 'Update' ? 
+  const initialValues = event && type === 'Atualizar' ? 
   {...event, startDateTime: new Date(event.startDateTime), endDateTime: new Date(event.endDateTime)} : 
   eventDefaultValues;
   const router = useRouter();
@@ -65,7 +65,7 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
       uploadedImageUrl = uploadedImages[0].url;
     }
 
-    if(type === 'Create') {
+    if(type === 'Criar') {
       try {
         const newEvent = await createEvent({
           event: { ...values, imageUrl: uploadedImageUrl},
@@ -82,7 +82,7 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
       }
     }
 
-    if(type === 'Update') {
+    if(type === 'Atualizar') {
       if(!eventId) {
         router.back()
         return;
@@ -115,7 +115,7 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
           render={({ field }) => (
             <FormItem className="w-full">
               <FormControl>
-                <Input placeholder="Event Title" {...field} className="input-field"/>
+                <Input placeholder="Nome do evento" {...field} className="input-field"/>
               </FormControl>
               <FormMessage />
             </FormItem>
@@ -142,7 +142,7 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
             name="description"            render={({ field }) => (
               <FormItem className="w-full">
                 <FormControl className="h-72">
-                  <Textarea placeholder="Description" {...field} className="textarea rounded-2xl"/>
+                  <Textarea placeholder="Descrição do evento" {...field} className="textarea rounded-2xl"/>
                 </FormControl>
                 <FormMessage />
               </FormItem>
@@ -179,7 +179,7 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
                       width={24}
                       height={24}
                     />
-                    <Input placeholder="Event location or Online" {...field} className="input-field"/>
+                    <Input placeholder="Local do evento ou Online" {...field} className="input-field"/>
                   </div>
                 </FormControl>
                 <FormMessage />
@@ -203,13 +203,14 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
                       height={24}
                       className="filter-grey"
                     />
-                    <p className="ml-3 whitespace-nowrap text-grey-600">Start Date:</p>
+                    <p className="ml-3 whitespace-nowrap text-grey-600">Data de início:</p>
                     <DatePicker
                       selected={field.value}
                       onChange={(date: Date) => field.onChange(date)}
                       showTimeSelect
                       timeInputLabel="Time:"
-                      dateFormat="MM/dd/yyyy h:mm aa"
+                      // dateFormat="MM/dd/yyyy h:mm aa"
+                      dateFormat="dd/MM/yyyy h:mm aa"
                       wrapperClassName="datePicker"
                     />
                   </div>
@@ -233,13 +234,13 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
                       height={24}
                       className="filter-grey"
                     />
-                    <p className="ml-3 whitespace-nowrap text-grey-600">End Date:</p>
+                    <p className="ml-3 whitespace-nowrap text-grey-600">Data de término:</p>
                     <DatePicker
                       selected={field.value}
                       onChange={(date: Date) => field.onChange(date)}
                       showTimeSelect
                       timeInputLabel="Time:"
-                      dateFormat="MM/dd/yyyy h:mm aa"
+                      dateFormat="dd/MM/yyyy h:mm aa"
                       wrapperClassName="datePicker"
                     />
                   </div>
@@ -265,7 +266,7 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
                         height={24}
                         className="filter-grey"
                       />
-                      <Input type="number" placeholder="Price" {...field}
+                      <Input type="number" placeholder="Preço" {...field}
                         className="p-regular-16 border-0 bg-grey-50 outline-offset-0 focus:border-0
                           focus-visible:ring-0 focus-visible:ring-offset-0
                         "
@@ -282,7 +283,7 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
                                   className="whitespace-nowrap pr-3 leading-none 
                                     peer-disabled:cursor-not-allowed
                                     peer-disabled:opacity-70"
-                                >Free Ticket</label>
+                                >Ticket grátis</label>
                                 <Checkbox
                                   onCheckedChange={field.onChange}
                                   checked={field.value}
@@ -329,9 +330,9 @@ const EventForm = ({ userId, type, event, eventId}: EventFormProps) => {
         disabled={form.formState.isSubmitting}
         className="button col-span-2 w-full"
       >{form.formState.isSubmitting ? (
-        'Submitting...'
+        'Enviando...'
       ) : (
-        `${type} Event`
+        `${type} Evento`
       ) }</Button>
     </form>
   </Form>
