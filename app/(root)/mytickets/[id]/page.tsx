@@ -28,11 +28,11 @@ const MyTicketsDetails = async ({ searchParams }: SearchParamProps) => {
         <div className="wrapper flex items-center justify-center sm:justify-between">
           <h3 className='h3-bold text-center sm:text-left'>Meu ticket</h3>
           {/* <Button asChild size="lg" className="button hidden sm:flex"> */}
-          <Button asChild size="lg" className="button sm:flex">
+          {/* <Button asChild size="lg" className="button sm:flex">
             <Link href="/#events">
               Baixar como PDF
             </Link>
-          </Button>
+          </Button> */}
         </div>
       </section>
 
@@ -42,8 +42,6 @@ const MyTicketsDetails = async ({ searchParams }: SearchParamProps) => {
             <h3 className='text-xl font-bold sm:text-left'>
               Pedido nº: <span className='text-xl font-medium sm:text-left'>{ticket._id}</span>
             </h3>
-
-            <h4>Comprador: {ticket.buyer}</h4>
           </div>
         </section>
       ))}
