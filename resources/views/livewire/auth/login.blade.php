@@ -13,10 +13,12 @@ use Livewire\Volt\Component;
 
 new #[Layout('components.layouts.auth')] class extends Component {
     #[Validate('required|string|email')]
-    public string $email = '';
+    // public string $email = '';
+    public string $email = 'gabrielgws.dev@gmail.com';
 
     #[Validate('required|string')]
-    public string $password = '';
+    // public string $password = '';
+    public string $password = '123456789';
 
     public bool $remember = false;
 
@@ -69,7 +71,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
      */
     protected function throttleKey(): string
     {
-        return Str::transliterate(Str::lower($this->email).'|'.request()->ip());
+        return Str::transliterate(Str::lower($this->email) . '|' . request()->ip());
     }
 }; ?>
 
@@ -88,8 +90,7 @@ new #[Layout('components.layouts.auth')] class extends Component {
             required
             autofocus
             autocomplete="email"
-            placeholder="email@example.com"
-        />
+            placeholder="email@example.com" />
 
         <!-- Password -->
         <div class="relative">
@@ -100,13 +101,12 @@ new #[Layout('components.layouts.auth')] class extends Component {
                 required
                 autocomplete="current-password"
                 :placeholder="__('Password')"
-                viewable
-            />
+                viewable />
 
             @if (Route::has('password.request'))
-                <flux:link class="absolute end-0 top-0 text-sm" :href="route('password.request')" wire:navigate>
-                    {{ __('Forgot your password?') }}
-                </flux:link>
+            <flux:link class="absolute end-0 top-0 text-sm" :href="route('password.request')" wire:navigate>
+                {{ __('Forgot your password?') }}
+            </flux:link>
             @endif
         </div>
 
@@ -119,9 +119,9 @@ new #[Layout('components.layouts.auth')] class extends Component {
     </form>
 
     @if (Route::has('register'))
-        <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
-            {{ __('Don\'t have an account?') }}
-            <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
-        </div>
+    <div class="space-x-1 rtl:space-x-reverse text-center text-sm text-zinc-600 dark:text-zinc-400">
+        {{ __('Don\'t have an account?') }}
+        <flux:link :href="route('register')" wire:navigate>{{ __('Sign up') }}</flux:link>
+    </div>
     @endif
 </div>
