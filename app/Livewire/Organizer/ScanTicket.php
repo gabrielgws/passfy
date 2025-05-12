@@ -84,6 +84,6 @@ class ScanTicket extends Component
         return view('livewire.organizer.scan-ticket', [
             'checkedInCount' => $checkedInCount,
             'totalTickets' => $totalTickets,
-        ])->layout('layouts.app', ['header' => 'Validar Ingressos']);
+        ])->layout('components.layouts.app', ['header' => 'Validar Ingressos']);
     }
 }

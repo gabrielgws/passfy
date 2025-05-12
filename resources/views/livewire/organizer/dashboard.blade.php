@@ -4,18 +4,18 @@
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-6">
                 <!-- Estatísticas -->
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-2">Total de Eventos</h3>
-                    <p class="text-3xl font-bold">{{ $totalEvents }}</p>
+                    <h3 class="text-lg font-semibold mb-2 text-black">Total de Eventos</h3>
+                    <p class="text-3xl font-bold text-black">{{ $totalEvents }}</p>
                 </div>
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-2">Ingressos Vendidos</h3>
-                    <p class="text-3xl font-bold">{{ $totalTicketsSold }}</p>
+                    <h3 class="text-lg font-semibold mb-2 text-black">Ingressos Vendidos</h3>
+                    <p class="text-3xl font-bold text-black">{{ $totalTicketsSold }}</p>
                 </div>
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg p-6">
-                    <h3 class="text-lg font-semibold mb-2">Receita Total</h3>
-                    <p class="text-3xl font-bold">R$ {{ number_format($totalRevenue, 2, ',', '.') }}</p>
+                    <h3 class="text-lg font-semibold mb-2 text-black">Receita Total</h3>
+                    <p class="text-3xl font-bold text-black">R$ {{ number_format($totalRevenue, 2, ',', '.') }}</p>
                 </div>
             </div>
 
@@ -31,7 +31,7 @@
                     @foreach($upcomingEvents as $event)
                     <div class="border rounded-lg p-4 flex flex-col md:flex-row justify-between items-start md:items-center">
                         <div>
-                            <h3 class="font-medium text-lg">{{ $event->title }}</h3>
+                            <h3 class="font-medium text-lg text-black">{{ $event->title }}</h3>
                             <p class="text-gray-600">{{ \Carbon\Carbon::parse($event->start_date)->format('d/m/Y H:i') }}</p>
                         </div>
                         <div class="mt-2 md:mt-0 flex space-x-2">

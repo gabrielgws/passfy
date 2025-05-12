@@ -71,16 +71,10 @@ class EventEdit extends Component
             $event->update($validatedData);
 
             // Adicionar flash message para ser exibida como toast
-            $this->dispatch('toast', [
-                'message' => 'Evento atualizado com sucesso!',
-                'type' => 'success'
-            ]);
+            $this->dispatch('toast', message: 'Evento atualizado com sucesso!', type: 'success');
         } catch (\Exception $e) {
             // Adicionar flash message de erro como toast
-            $this->dispatch('toast', [
-                'message' => 'Erro ao atualizar evento: ' . $e->getMessage(),
-                'type' => 'error'
-            ]);
+            $this->dispatch('toast', message: 'Erro ao atualizar evento', type: 'error');
         }
     }
 
