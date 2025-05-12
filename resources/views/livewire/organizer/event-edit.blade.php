@@ -1,6 +1,6 @@
 <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-6">
     <div class="bg-white shadow-md rounded-lg p-6">
-        <h1 class="text-2xl font-semibold mb-6">Criar Novo Evento</h1>
+        <h1 class="text-2xl font-semibold mb-6">Editar Evento</h1>
 
         @if(session('success'))
         <div class="bg-green-100 border border-green-400 text-green-700 px-4 py-3 rounded relative mb-4" role="alert">
@@ -14,7 +14,7 @@
         </div>
         @endif
 
-        <form wire:submit.prevent="save" class="space-y-6">
+        <form wire:submit.prevent="update" class="space-y-6">
             <div>
                 <label for="title" class="block text-sm font-medium text-gray-700">Título do Evento</label>
                 <input
@@ -81,7 +81,7 @@
             </div>
 
             <div>
-                <label for="max_tickets" class="block text-sm font-medium text-gray-700">Limite de Ingressos (opcional)</label>
+                <label for="max_tickets" class="block text-sm font-medium text-gray-700">Número Máximo de Ingressos (opcional)</label>
                 <input
                     type="number"
                     id="max_tickets"
@@ -91,6 +91,17 @@
                 @error('max_tickets')
                 <p class="mt-2 text-sm text-red-600">{{ $message }}</p>
                 @enderror
+            </div>
+
+            <div class="flex items-center">
+                <input
+                    type="checkbox"
+                    id="is_published"
+                    wire:model="is_published"
+                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
+                <label for="is_published" class="ml-2 block text-sm text-gray-900">
+                    Publicar evento
+                </label>
             </div>
 
             <div>
@@ -106,28 +117,22 @@
 
                 @if($cover_image)
                 <div class="mt-4">
-                    <p class="text-sm font-medium text-gray-700">Pré-visualização:</p>
+                    <p class="text-sm font-medium text-gray-700">Nova Imagem (Pré-visualização):</p>
                     <img src="{{ $cover_image->temporaryUrl() }}" class="mt-2 h-40 w-auto object-cover rounded-md">
                 </div>
+                @elseif($current_cover_image)
+                <div class="mt-4">
+                    <p class="text-sm font-medium text-gray-700">Imagem Atual:</p>
+                    <img src="{{ asset('storage/' . $current_cover_image) }}" class="mt-2 h-40 w-auto object-cover rounded-md">
+                </div>
                 @endif
-            </div>
-
-            <div class="flex items-center">
-                <input
-                    type="checkbox"
-                    id="is_published"
-                    wire:model="is_published"
-                    class="h-4 w-4 text-indigo-600 focus:ring-indigo-500 border-gray-300 rounded">
-                <label for="is_published" class="ml-2 block text-sm text-gray-900">
-                    Publicar evento
-                </label>
             </div>
 
             <div class="flex justify-end">
                 <button
                     type="submit"
                     class="inline-flex justify-center py-2 px-4 border border-transparent shadow-sm text-sm font-medium rounded-md text-white bg-indigo-600 hover:bg-indigo-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500">
-                    Criar Evento
+                    Atualizar Evento
                 </button>
             </div>
         </form>

@@ -36,7 +36,6 @@ class Dashboard extends Component
 
     public function render()
     {
-        return view('livewire.organizer.dashboard')
-            ->layout('layouts.app', ['header' => 'Dashboard do Organizador']);
+        return view('livewire.organizer.dashboard');
     }
 }

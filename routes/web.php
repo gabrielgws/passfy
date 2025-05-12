@@ -6,6 +6,7 @@ use Livewire\Volt\Volt;
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckCanCreateEvents;
 use App\Livewire\Organizer\Dashboard as OrganizerDashboard;
+use App\Livewire\Organizer\EventEdit;
 use App\Livewire\Organizer\EventsList;
 use App\Livewire\Organizer\EventForm;
 use App\Livewire\Organizer\TicketForm;
@@ -32,7 +33,7 @@ Route::middleware(['auth', CheckCanCreateEvents::class])->prefix('organizer')->g
     Route::get('/dashboard', OrganizerDashboard::class)->name('organizer.dashboard');
     Route::get('/events', EventsList::class)->name('organizer.events');
     Route::get('/events/create', EventForm::class)->name('organizer.event.create');
-    Route::get('/events/{eventId}/edit', EventForm::class)->name('organizer.event.edit');
+    Route::get('/events/{event}/edit', EventEdit::class)->name('organizer.event.edit');
     Route::get('/events/{eventId}/scan', ScanTicket::class)->name('organizer.event.scan');
     Route::get('/events/{eventId}/tickets/create', TicketForm::class)->name('organizer.ticket.create');
     Route::get('/events/{eventId}/tickets/{ticketId}/edit', TicketForm::class)->name('organizer.ticket.edit');

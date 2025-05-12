@@ -25,7 +25,7 @@ class EventsList extends Component
 
         return view('livewire.organizer.events-list', [
             'events' => $events
-        ])->layout('layouts.app', ['header' => 'Meus Eventos']);
+        ])->layout('components.layouts.app', ['header' => 'Meus Eventos']);
     }
 
     public function deleteEvent($eventId)

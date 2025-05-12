@@ -5,57 +5,74 @@ namespace App\Livewire\Organizer;
 use Livewire\Component;
 use Livewire\WithFileUploads;
 use App\Models\Event;
-use Illuminate\Support\Str;
+use Carbon\Carbon;
 
 class EventForm extends Component
 {
     use WithFileUploads;
 
-    public Event $event;
-    public $coverImage;
-    public $isEditing = false;
+    public $title = '';
+    public $description = '';
+    public $location = '';
+    public $start_date = '';
+    public $end_date = '';
+    public $max_tickets = null;
+    public $cover_image = null;
+    public $is_published = false;
 
     protected $rules = [
-        'event.title' => 'required|string|max:255',
-        'event.description' => 'required|string',
-        'event.location' => 'required|string|max:255',
-        'event.start_date' => 'required|date',
-        'event.end_date' => 'required|date|after:event.start_date',
-        'event.max_tickets' => 'nullable|integer|min:0',
-        'event.is_published' => 'boolean',
-        'coverImage' => 'nullable|image|max:1024', // 1MB max
+        'title' => 'required|min:3|max:255',
+        'description' => 'required|min:10',
+        'location' => 'required',
+        'start_date' => 'required|date',
+        'end_date' => 'required|date|after:start_date',
+        'max_tickets' => 'nullable|integer|min:0',
+        'cover_image' => 'nullable|image|max:1024',
+        'is_published' => 'boolean'
     ];
 
-    public function mount($eventId = null)
-    {
-        if ($eventId) {
-            $this->event = Event::where('user_id', auth()->id())->findOrFail($eventId);
-            $this->isEditing = true;
-        } else {
-            $this->event = new Event();
-            $this->event->user_id = auth()->id();
-            $this->event->is_published = false;
-        }
-    }
+    protected $messages = [
+        'title.required' => 'O título do evento é obrigatório.',
+        'description.required' => 'A descrição do evento é obrigatória.',
+        'location.required' => 'O local do evento é obrigatório.',
+        'start_date.required' => 'A data de início é obrigatória.',
+        'end_date.required' => 'A data de término é obrigatória.',
+        'end_date.after' => 'A data de término deve ser posterior à data de início.',
+        'max_tickets.integer' => 'O número máximo de ingressos deve ser um número inteiro.',
+    ];
 
     public function save()
     {
-        $this->validate();
+        $validatedData = $this->validate();
 
-        if ($this->coverImage) {
-            $filename = Str::slug($this->event->title) . '-' . uniqid() . '.' . $this->coverImage->getClientOriginalExtension();
-            $path = $this->coverImage->storeAs('events', $filename, 'public');
-            $this->event->cover_image = $path;
+        // Processar upload de imagem
+        if ($this->cover_image) {
+            $imagePath = $this->cover_image->store('events', 'public');
+            $validatedData['cover_image'] = $imagePath;
         }
 
-        $this->event->save();
+        // Converter datas
+        $validatedData['start_date'] = Carbon::parse($this->start_date)->format('Y-m-d H:i:s');
+        $validatedData['end_date'] = Carbon::parse($this->end_date)->format('Y-m-d H:i:s');
 
-        return redirect()->route('organizer.events')->with('success', $this->isEditing ? 'Evento atualizado com sucesso!' : 'Evento criado com sucesso!');
+        // Adicionar ID do usuário
+        $validatedData['user_id'] = auth()->id();
+
+        // Criar evento
+        try {
+            $event = Event::create($validatedData);
+
+            session()->flash('success', 'Evento criado com sucesso!');
+            return redirect()->route('organizer.events');
+        } catch (\Exception $e) {
+            session()->flash('error', 'Erro ao criar evento: ' . $e->getMessage());
+            return back();
+        }
     }
 
     public function render()
     {
         return view('livewire.organizer.event-form')
-            ->layout('layouts.app', ['header' => $this->isEditing ? 'Editar Evento' : 'Criar Evento']);
+            ->layout('components.layouts.app');
     }
 }
