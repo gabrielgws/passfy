@@ -15,6 +15,9 @@
 
         <flux:navlist variant="outline">
             <flux:navlist.group :heading="__('Platform')" class="grid">
+                @if(auth()->check() && auth()->user()->is_admin)
+                <flux:navlist.item icon="home" :href="route('admin.categories')" :current="request()->routeIs('admin.categories')" wire:navigate>{{ __('Categorias') }}</flux:navlist.item>
+                @endif
                 <flux:navlist.item icon="home" :href="route('dashboard')" :current="request()->routeIs('dashboard')" wire:navigate>{{ __('Dashboard') }}</flux:navlist.item>
                 @if(auth()->check() && auth()->user()->can_create_events)
                 <flux:navlist.item icon="home" :href="route('organizer.dashboard')" :current="request()->routeIs('organizer.dashboard')" wire:navigate>{{ __('Organizador') }}</flux:navlist.item>

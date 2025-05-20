@@ -15,6 +15,7 @@ class EventEdit extends Component
     public $title = '';
     public $description = '';
     public $location = '';
+    public $category_id = '';
     public $start_date = '';
     public $end_date = '';
     public $max_tickets = null;
@@ -28,6 +29,7 @@ class EventEdit extends Component
         $this->title = $event->title;
         $this->description = $event->description;
         $this->location = $event->location;
+        $this->category_id = $event->category_id;
 
         $this->start_date = Carbon::parse($event->start_date)->format('Y-m-d\TH:i');
         $this->end_date = Carbon::parse($event->end_date)->format('Y-m-d\TH:i');
@@ -41,6 +43,7 @@ class EventEdit extends Component
         'title' => 'required|min:3|max:255',
         'description' => 'required|min:10',
         'location' => 'required',
+        'category_id' => 'required|exists:categories,id',
         'start_date' => 'required|date',
         'end_date' => 'required|date|after:start_date',
         'max_tickets' => 'nullable|integer|min:0',
@@ -80,7 +83,8 @@ class EventEdit extends Component
 
     public function render()
     {
-        return view('livewire.organizer.event-edit')
-            ->layout('components.layouts.app');
+        return view('livewire.organizer.event-edit', [
+            'categories' => \App\Models\Category::orderBy('name')->get()
+        ])->layout('components.layouts.app');
     }
 }

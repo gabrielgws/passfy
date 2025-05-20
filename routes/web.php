@@ -5,6 +5,8 @@ use Livewire\Volt\Volt;
 
 use App\Http\Controllers\ProfileController;
 use App\Http\Middleware\CheckCanCreateEvents;
+use App\Http\Middleware\CheckIsAdmin;
+use App\Livewire\Admin\CategoryManager;
 use App\Livewire\Organizer\Dashboard as OrganizerDashboard;
 use App\Livewire\Organizer\EventEdit;
 use App\Livewire\Organizer\EventsList;
@@ -37,6 +39,10 @@ Route::middleware(['auth', CheckCanCreateEvents::class])->prefix('organizer')->g
     Route::get('/events/{eventId}/scan', ScanTicket::class)->name('organizer.event.scan');
     Route::get('/events/{eventId}/tickets/create', TicketForm::class)->name('organizer.ticket.create');
     Route::get('/events/{eventId}/tickets/{ticketId}/edit', TicketForm::class)->name('organizer.ticket.edit');
+});
+
+Route::middleware(['auth', CheckIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
+    Route::get('/categories', CategoryManager::class)->name('categories');
 });
 
 require __DIR__ . '/auth.php';

@@ -17,6 +17,7 @@ class Event extends Model
         'title',
         'description',
         'location',
+        'category_id',
         'start_date',
         'end_date',
         'cover_image',
@@ -33,6 +34,11 @@ class Event extends Model
     public function user(): BelongsTo
     {
         return $this->belongsTo(User::class);
+    }
+
+    public function category(): BelongsTo
+    {
+        return $this->belongsTo(Category::class);
     }
 
     public function tickets(): HasMany

@@ -17,6 +17,7 @@ return new class extends Migration
             $table->string('title');
             $table->text('description');
             $table->string('location');
+            $table->foreignId('category_id')->constrained()->onDelete('restrict');
             $table->dateTime('start_date');
             $table->dateTime('end_date');
             $table->string('cover_image')->nullable();

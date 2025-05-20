@@ -14,6 +14,7 @@ class EventForm extends Component
     public $title = '';
     public $description = '';
     public $location = '';
+    public $category_id = '';
     public $start_date = '';
     public $end_date = '';
     public $max_tickets = null;
@@ -24,6 +25,7 @@ class EventForm extends Component
         'title' => 'required|min:3|max:255',
         'description' => 'required|min:10',
         'location' => 'required',
+        'category_id' => 'required|exists:categories,id',
         'start_date' => 'required|date',
         'end_date' => 'required|date|after:start_date',
         'max_tickets' => 'nullable|integer|min:0',
@@ -35,6 +37,8 @@ class EventForm extends Component
         'title.required' => 'O título do evento é obrigatório.',
         'description.required' => 'A descrição do evento é obrigatória.',
         'location.required' => 'O local do evento é obrigatório.',
+        'category_id.required' => 'A categoria do evento é obrigatória.',
+        'category_id.exists' => 'A categoria selecionada é inválida.',
         'start_date.required' => 'A data de início é obrigatória.',
         'end_date.required' => 'A data de término é obrigatória.',
         'end_date.after' => 'A data de término deve ser posterior à data de início.',
@@ -72,7 +76,8 @@ class EventForm extends Component
 
     public function render()
     {
-        return view('livewire.organizer.event-form')
-            ->layout('components.layouts.app');
+        return view('livewire.organizer.event-form', [
+            'categories' => \App\Models\Category::orderBy('name')->get()
+        ])->layout('components.layouts.app');
     }
 }
