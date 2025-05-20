@@ -13,10 +13,13 @@ use App\Livewire\Organizer\EventsList;
 use App\Livewire\Organizer\EventForm;
 use App\Livewire\Organizer\TicketForm;
 use App\Livewire\Organizer\ScanTicket;
+use App\Livewire\Events\EventList;
+use App\Livewire\Events\EventShow;
+use App\Livewire\Welcome;
 
-Route::get('/', function () {
-    return view('welcome');
-})->name('home');
+Route::get('/', Welcome::class)
+    ->name('home')
+    ->middleware(['web']);
 
 Route::view('dashboard', 'dashboard')
     ->middleware(['auth', 'verified'])
@@ -44,5 +47,11 @@ Route::middleware(['auth', CheckCanCreateEvents::class])->prefix('organizer')->g
 Route::middleware(['auth', CheckIsAdmin::class])->prefix('admin')->name('admin.')->group(function () {
     Route::get('/categories', CategoryManager::class)->name('categories');
 });
+
+// Public routes
+Route::get('/events', EventList::class)->name('events.index');
+Route::get('/events/{event}', EventShow::class)
+    ->name('events.show')
+    ->middleware(['web']);
 
 require __DIR__ . '/auth.php';
