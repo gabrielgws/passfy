@@ -6,8 +6,9 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
+use Illuminate\Database\Eloquent\Casts\Attribute;
 
-class Ticket extends Model
+class TicketType extends Model
 {
     use HasFactory;
 
@@ -17,14 +18,22 @@ class Ticket extends Model
         'description',
         'price',
         'quantity_available',
-        'sale_starts_at',
-        'sale_ends_at',
+        'quantity_sold',
+        'min_purchase',
+        'max_purchase',
+        'is_visible',
+        'is_active',
+        'sort_order',
+        'sales_start_at',
+        'sales_end_at',
     ];
 
     protected $casts = [
         'price' => 'decimal:2',
-        'sale_starts_at' => 'datetime',
-        'sale_ends_at' => 'datetime',
+        'is_visible' => 'boolean',
+        'is_active' => 'boolean',
+        'sales_start_at' => 'datetime',
+        'sales_end_at' => 'datetime',
     ];
 
     public function event(): BelongsTo
@@ -32,15 +41,49 @@ class Ticket extends Model
         return $this->belongsTo(Event::class);
     }
 
-    public function orderItems(): HasMany
+    public function tickets(): HasMany
     {
-        return $this->hasMany(OrderItem::class);
+        return $this->hasMany(Ticket::class);
     }
 
-    public function getTicketsRemaining()
+    protected function quantityRemaining(): Attribute
     {
-        $sold = $this->orderItems()->sum('quantity');
+        return Attribute::make(
+            get: fn() => $this->quantity_available - $this->quantity_sold,
+        );
+    }
 
-        return $this->quantity_available - $sold;
+    protected function isAvailable(): Attribute
+    {
+        return Attribute::make(
+            get: function () {
+                if (!$this->is_active || !$this->is_visible) {
+                    return false;
+                }
+
+                if ($this->quantity_remaining <= 0) {
+                    return false;
+                }
+
+                $now = now();
+
+                if ($this->sales_start_at && $now->lt($this->sales_start_at)) {
+                    return false;
+                }
+
+                if ($this->sales_end_at && $now->gt($this->sales_end_at)) {
+                    return false;
+                }
+
+                return true;
+            }
+        );
+    }
+
+    protected function formattedPrice(): Attribute
+    {
+        return Attribute::make(
+            get: fn() => 'R$ ' . number_format($this->price, 2, ',', '.'),
+        );
     }
 }

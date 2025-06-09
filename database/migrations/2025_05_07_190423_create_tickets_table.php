@@ -6,29 +6,31 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
-        Schema::create('tickets', function (Blueprint $table) {
+        Schema::create('ticket_types', function (Blueprint $table) {
             $table->id();
-            $table->foreignId('event_id')->constrained()->onDelete('cascade');
-            $table->string('name');
+            $table->foreignId('event_id')->constrained()->cascadeOnDelete();
+            $table->string('name'); // Ex: "Inteira", "Meia", "VIP"
             $table->text('description')->nullable();
-            $table->decimal('price', 10, 2);
-            $table->integer('quantity_available');
-            $table->dateTime('sale_starts_at')->nullable();
-            $table->dateTime('sale_ends_at')->nullable();
+            $table->decimal('price', 10, 2)->default(0);
+            $table->integer('quantity_available')->default(0);
+            $table->integer('quantity_sold')->default(0);
+            $table->integer('min_purchase')->default(1);
+            $table->integer('max_purchase')->default(10);
+            $table->boolean('is_visible')->default(true);
+            $table->boolean('is_active')->default(true);
+            $table->integer('sort_order')->default(0);
+            $table->datetime('sales_start_at')->nullable();
+            $table->datetime('sales_end_at')->nullable();
             $table->timestamps();
+
+            $table->index(['event_id', 'is_active', 'is_visible']);
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
-        Schema::dropIfExists('tickets');
+        Schema::dropIfExists('ticket_types');
     }
 };

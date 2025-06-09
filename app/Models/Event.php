@@ -41,8 +41,16 @@ class Event extends Model
         return $this->belongsTo(Category::class);
     }
 
-    public function tickets(): HasMany
+    public function ticketTypes(): HasMany
     {
-        return $this->hasMany(Ticket::class);
+        return $this->hasMany(TicketType::class)->orderBy('sort_order');
+    }
+
+    public function availableTicketTypes(): HasMany
+    {
+        return $this->hasMany(TicketType::class)
+            ->where('is_active', true)
+            ->where('is_visible', true)
+            ->orderBy('sort_order');
     }
 }
