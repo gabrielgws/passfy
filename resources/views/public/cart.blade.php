@@ -1,6 +1,4 @@
-@extends('layouts.public')
-
-@section('content')
+<x-layouts.public :title="'Carrinho de Compras'">
 <div class="container mx-auto px-4 py-8">
     <div class="max-w-4xl mx-auto">
         <div class="mb-8">
@@ -11,4 +9,4 @@
         @livewire('public.cart-page')
     </div>
 </div>
-@endsection
+</x-layouts.public>

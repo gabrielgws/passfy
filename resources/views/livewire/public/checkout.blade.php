@@ -30,7 +30,7 @@
             <div class="bg-white dark:bg-gray-800 rounded-lg shadow-sm p-6">
                 <h2 class="text-xl font-semibold text-gray-900 dark:text-white mb-6">Dados do Comprador</h2>
 
-                <form wire:submit="processOrder" class="space-y-6">
+                <form wire:submit.prevent="processOrder" class="space-y-6">
                     <!-- Nome -->
                     <div>
                         <label for="customerName" class="block text-sm font-medium text-gray-700 dark:text-gray-300 mb-2">
@@ -104,7 +104,7 @@
                             <label class="flex items-center">
                                 <input
                                     type="radio"
-                                    wire:model="paymentMethod"
+                                    wire:model.live="paymentMethod"
                                     value="pix"
                                     class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                 <span class="ml-3 text-gray-700 dark:text-gray-300">PIX</span>
@@ -112,7 +112,7 @@
                             <label class="flex items-center">
                                 <input
                                     type="radio"
-                                    wire:model="paymentMethod"
+                                    wire:model.live="paymentMethod"
                                     value="credit_card"
                                     class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                 <span class="ml-3 text-gray-700 dark:text-gray-300">Cartão de Crédito</span>
@@ -120,7 +120,7 @@
                             <label class="flex items-center">
                                 <input
                                     type="radio"
-                                    wire:model="paymentMethod"
+                                    wire:model.live="paymentMethod"
                                     value="debit_card"
                                     class="w-4 h-4 text-blue-600 border-gray-300 focus:ring-blue-500">
                                 <span class="ml-3 text-gray-700 dark:text-gray-300">Cartão de Débito</span>
@@ -129,6 +129,25 @@
                         @error('paymentMethod')
                         <p class="mt-1 text-sm text-red-600 dark:text-red-400">{{ $message }}</p>
                         @enderror
+                        
+                        <!-- Informação sobre Cartão de Crédito/Débito -->
+                        @if(in_array($paymentMethod, ['credit_card', 'debit_card']))
+                        <div class="mt-4 p-4 bg-gray-50 dark:bg-gray-700 rounded-lg space-y-4">
+                            <div class="flex items-center">
+                                <svg class="w-5 h-5 text-blue-500" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                                </svg>
+                                <span class="ml-2 text-sm text-gray-700 dark:text-gray-300">Você será redirecionado para o checkout seguro do Stripe para finalizar seu pagamento.</span>
+                            </div>
+                            
+                            <div class="flex items-center mt-2">
+                                <svg class="w-5 h-5 text-gray-400" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 15v2m-6 4h12a2 2 0 002-2v-6a2 2 0 00-2-2H6a2 2 0 00-2 2v6a2 2 0 002 2zm10-10V7a4 4 0 00-8 0v4h8z"></path>
+                                </svg>
+                                <span class="ml-2 text-xs text-gray-500 dark:text-gray-400">Seus dados estão seguros e criptografados</span>
+                            </div>
+                        </div>
+                        @endif
                     </div>
 
                     <!-- Botão Finalizar -->
@@ -197,3 +216,17 @@
         </div>
     </div>
 </div>
+
+@push('scripts')
+<script src="https://js.stripe.com/v3/"></script>
+<script>
+    document.addEventListener('livewire:initialized', function() {
+        // Escuta o evento do Livewire quando o pedido for processado e o checkout do Stripe for criado
+        Livewire.on('redirectToStripeCheckout', function(checkoutUrl) {
+            console.log('Evento redirectToStripeCheckout recebido com URL:', checkoutUrl);
+            // Redireciona para o checkout do Stripe
+            window.location.href = checkoutUrl;
+        });
+    });
+</script>
+@endpush

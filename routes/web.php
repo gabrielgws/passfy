@@ -36,6 +36,40 @@ Route::get('/pedido/{order:order_number}/sucesso', function ($order) {
     return view('public.order-success', ['order' => $order]);
 })->name('public.order.success');
 
+// Webhook do Stripe para processar eventos de pagamento
+Route::post('/webhook/stripe', function () {
+    // Recupera o payload do webhook
+    $payload = @file_get_contents('php://input');
+    $sig_header = request()->header('Stripe-Signature');
+    $endpoint_secret = config('services.stripe.webhook_secret');
+    
+    try {
+        $event = \Stripe\Webhook::constructEvent(
+            $payload, $sig_header, $endpoint_secret
+        );
+        
+        // Processa o evento
+        if ($event->type === 'checkout.session.completed') {
+            $session = $event->data->object;
+            
+            // Recupera o pedido pelo metadata
+            $orderNumber = $session->metadata->order_number;
+            $order = Order::where('order_number', $orderNumber)->first();
+            
+            if ($order) {
+                // Atualiza o status do pedido para pago
+                $order->payment_status = 'paid';
+                $order->payment_id = $session->payment_intent;
+                $order->save();
+            }
+        }
+        
+        return response()->json(['status' => 'success']);
+    } catch (\Exception $e) {
+        return response()->json(['error' => $e->getMessage()], 400);
+    }
+})->name('stripe.webhook');
+
 Route::middleware([
     'auth',
     ValidateSessionWithWorkOS::class,

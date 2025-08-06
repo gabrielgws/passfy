@@ -44,6 +44,11 @@ class TicketManager extends Component
     {
         $this->editingId = null;
         $this->showFormModal = true;
+        
+        // Verifica se o evento é gratuito e exibe uma mensagem informativa
+        if ($this->event->is_free) {
+            $this->dispatch('showInfo', 'Este é um evento gratuito. Todos os ingressos serão criados com preço zero.');
+        }
     }
 
     public function showEditModal($id)

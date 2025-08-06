@@ -21,11 +21,21 @@ class TicketForm extends Component
     public $sale_start_date = '';
     public $sale_end_date = '';
     public $is_active = true;
+    public $event;
 
     public function mount($eventId, $ticketId = null)
     {
         $this->eventId = $eventId;
         $this->ticketId = $ticketId;
+        
+        // Carrega o evento para verificar se é gratuito
+        $this->event = \App\Models\Event::where('user_id', Auth::id())
+            ->findOrFail($eventId);
+            
+        // Se o evento for gratuito, define o preço como 0
+        if ($this->event->is_free) {
+            $this->price = 0;
+        }
 
         if ($ticketId) {
             $ticket = Ticket::whereHas('event', function ($query) {
@@ -41,6 +51,11 @@ class TicketForm extends Component
                 'max_per_order',
                 'is_active',
             ]));
+            
+            // Se o evento for gratuito, garante que o preço seja 0
+            if ($this->event->is_free) {
+                $this->price = 0;
+            }
 
             $this->sale_start_date = $ticket->sale_start_date ? $ticket->sale_start_date->format('Y-m-d\TH:i') : '';
             $this->sale_end_date = $ticket->sale_end_date ? $ticket->sale_end_date->format('Y-m-d\TH:i') : '';
@@ -49,10 +64,9 @@ class TicketForm extends Component
 
     public function rules()
     {
-        return [
+        $rules = [
             'name' => 'required|string|max:100',
             'description' => 'nullable|string|max:500',
-            'price' => 'required|numeric|min:0|max:999999.99',
             'quantity' => 'required|integer|min:1|max:999999',
             'min_per_order' => 'required|integer|min:1|max:100',
             'max_per_order' => 'nullable|integer|min:1|max:100',
@@ -60,17 +74,32 @@ class TicketForm extends Component
             'sale_end_date' => 'nullable|date|after_or_equal:sale_start_date',
             'is_active' => 'boolean',
         ];
+        
+        // Se o evento for gratuito, o preço deve ser 0
+        if ($this->event->is_free) {
+            $rules['price'] = 'required|numeric|in:0';
+        } else {
+            $rules['price'] = 'required|numeric|min:0|max:999999.99';
+        }
+        
+        return $rules;
     }
 
     public function save()
     {
         $this->validate();
+        
+        // Garante que eventos gratuitos só tenham ingressos gratuitos
+        if ($this->event->is_free && (float)$this->price > 0) {
+            $this->addError('price', 'Eventos gratuitos só podem ter ingressos gratuitos (preço zero).');
+            return;
+        }
 
         $data = [
             'event_id' => $this->eventId,
             'name' => $this->name,
             'description' => $this->description,
-            'price' => $this->price,
+            'price' => $this->event->is_free ? 0 : $this->price, // Garante que o preço seja 0 para eventos gratuitos
             'quantity' => $this->quantity,
             'min_per_order' => $this->min_per_order,
             'max_per_order' => $this->max_per_order ?: null,

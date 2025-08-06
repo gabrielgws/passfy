@@ -6,6 +6,7 @@ namespace App\Livewire\Public;
 
 use App\Models\Event;
 use App\Models\Ticket;
+use Illuminate\Support\Facades\Auth;
 use Livewire\Component;
 
 class CartPage extends Component
@@ -104,6 +105,12 @@ class CartPage extends Component
         if (empty($this->cartItems)) {
             session()->flash('error', 'Carrinho vazio!');
             return;
+        }
+        
+        // Verificar se o usuário está logado
+        if (!auth()->check()) {
+            session()->flash('error', 'Você precisa estar logado para finalizar a compra.');
+            return redirect()->route('login');
         }
 
         return redirect()->route('public.checkout');
